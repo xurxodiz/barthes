@@ -7,10 +7,11 @@
 				<a href="<?php echo esc_url( get_permalink() ); ?>"><?php the_title(); ?></a>
 			</h2>
 			<?php get_template_part( 'content/post-meta' ); ?>
+			<?php get_template_part( 'content/post-categories' ); ?>
+			<?php get_template_part( 'content/post-tags' ); ?>
 		</div>
 		<div class="post-content">
-			<?php ct_author_excerpt(); ?>
-			<?php get_template_part( 'content/comments-link' ); ?>
+			<?php the_excerpt(); ?>
 		</div>
 	</article>
 	<?php do_action( 'archive_post_after' ); ?>
