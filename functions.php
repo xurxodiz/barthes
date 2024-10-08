@@ -109,62 +109,116 @@ if (! function_exists(('ct_author_register_widget_areas'))) {
 }
 add_action('widgets_init', 'ct_author_register_widget_areas');
 
+if (! function_exists('ct_internal_translate_type')) {
+    function ct_internal_translate_type( $comment_type ) {
+        switch ( $comment_type ) :
+            case 'mention':
+                return array("Mencionou isto", '<strong>＠</strong>');
+            case 'pingback':
+                return array("Fixo pingback", '<strong>＠</strong>');
+            case 'trackback':
+                return array("Enviou trackback", '<strong>＠</strong>');
+            case 'reply':
+                return array("Respondeu a isto", '⤵️');
+            case 'tag':
+                return array("Etiquetou isto", '🏷️');
+            case 'bookmark':
+                return array("Gardou isto", '🔖');
+            case 'like':
+                return array("Gostou disto", '❤️');
+            case 'repost':
+                return array("Republicou isto", '🔄');
+            case 'rsvp:yes':
+                return array("Confirmou asistencia", '✅');
+            case 'rsvp:no':
+                return array("Negou asistencia", '❌');
+            case 'rsvp:maybe':
+                return array("Dixo asistir talvez", '🤔');
+            case 'rsvp:interested':
+                return array("Expresou interese", '❗');
+            case 'invited':
+                return array("Convidou a asistir", '💌');
+            case 'listen':
+                return array("Escoitou isto", '👂');
+            case 'read':
+                return array("Leu isto", '📖');
+            case 'watch':
+                return array("Mirou isto", '🍿');
+            case 'follow':    
+                return array("Seguiu isto", '🔔');
+            case 'comment':
+                return array("Comentou isto", null);
+            default: /* ?? */
+                return array($comment_type, null);
+        endswitch;
+    }
+
+}
+
 if (! function_exists('ct_author_customize_comments')) {
     function ct_author_customize_comments( $comment, $args, $depth ) {
-        $GLOBALS['comment'] = $comment;
-        switch ( $comment->comment_type ) :
-            case 'tag':
-            case 'rsvp:yes':
-            case 'rsvp:no':
-            case 'rsvp:maybe':
-            case 'rsvp:interested':
-            case 'invited':
-            case 'listen':
-            case 'read':
-            case 'watch':
-            case 'follow':
-                /* we don't support these */
-                break;
 
-            case 'pingback':
-            case 'trackback':
-            case 'bookmark':
-            case 'like':
-            case 'mention':
-            case 'other':
+        $GLOBALS['comment'] = $comment;
+        /*
+            at the moment we expect protocol to be one of
+            null - for pingback, trackback and local comments
+            activitypub - for fediverse comments
+            webmention - for all its different types
+        */
+        $protocol = get_comment_meta( $comment->comment_ID, 'protocol', true );
+        [ $byline, $text ] = ct_internal_translate_type( $comment->comment_type );
+        $comment_link_url = esc_url( get_comment_link( $comment->comment_ID ) );
+        $comment_meta_url = esc_url( get_comment_meta( $comment->comment_ID, 'url', true ) );
+        $comment_source_url = esc_url( get_comment_meta( $comment->comment_ID, 'source_id', true ) );
+
+        $time = get_comment_time();
+        $timestamp = get_comment_time( 'c' );
+        $date = get_comment_date();
+
         ?>
-                <li class="post mention">
-                <p><span class="comment_type"><?php echo $comment->comment_type; ?></span> <?php comment_author_link(); ?></p>
-        <?php
-                break;
-            case 'reply':
-            default:
-        ?>
-                <li <?php comment_class(); ?> id="li-comment-<?php comment_ID(); ?>">
-                <article id="comment-<?php comment_ID(); ?>" class="comment">
-                    <div class="comment-meta commentmetadata comment-author">
-                    <span class="comment-author-avatar"><?php echo get_avatar( $comment, 48 ); ?></span>
+        <li <?php comment_class($protocol); ?> id="li-comment-<?php comment_ID(); ?>">
+            <article id="comment-<?php comment_ID(); ?>" class="comment">
+
+                <div class="comment-meta commentmetadata comment-author">
+
                     <div class="vcard h-card p-author">
-                        <cite class="fn theme-genericon"><?php comment_author_link(); ?></cite>
-                    </div><!-- .comment-author .vcard -->
+                        <cite class="fn theme-genericon">
+                            <?php comment_author_link(); ?>
+                        </cite>
+                    </div>
+
+                    <div class="comment-type">
+                        <?php echo $byline; ?>
+                    </div>
 
                     <div class="comment-date">
-                        <a href="<?php echo esc_url( get_comment_link( $comment->comment_ID ) ); ?>"
-                        title="<?php echo get_comment_time(); ?>">
-                        <time class="dt-published" datetime="<?php comment_time( 'c' ); ?>">
-                            <?php echo get_comment_date(); ?>
-                        </time>
-                        </a>
-                    </div><!-- .comment-date -->
-                    </div><!-- .comment-meta .commentmetadata -->
-
-                    <div class="comment-content">
-                    <?php comment_text(); ?>
+                        <?php
+                        echo "<a href='{$comment_link_url}' title='{$time}'>
+                            <time class='dt-published' datetime='{$timestamp}'>
+                                {$date}
+                            </time>
+                        </a>"; ?>
                     </div>
-                </article><!-- #comment-## -->
+
+                </div>
+
+                <div class="comment-content">
+                    <?php
+                    if ( $comment->comment_type == 'pingback' || $comment->comment_type == 'trackback' ) {
+                        echo "{$text}";
+                        comment_author_link();
+                    } elseif ( $protocol == 'webmention' ) {
+                        echo "{$text} <a href='{$comment_meta_url}' class='url' rel='ugc'>{$comment_meta_url}</a>";
+                    } elseif ( $text ) {
+                        echo "{$text} <a href='{$comment_source_url}'>{$comment_source_url}</a>";
+                    } else {
+                        comment_text();
+                    }
+                    ?>
+                </div>
+            </article><!-- #comment-## -->
+        </li>
         <?php
-                break;
-        endswitch;
     }
 
 }
@@ -273,7 +327,7 @@ if (! function_exists('ct_author_excerpt')) {
     {
         global $post;
         $show_full_post = get_theme_mod('full_post');
-        $ismore         = strpos($post->post_content, '<!--more-->');
+        $ismore         = ($post) ? strpos($post->post_content, '<!--more-->') : false;
 
         if ($show_full_post === 'yes' || $ismore) {
             the_content();
@@ -901,3 +955,28 @@ add_action('init', function() {
 		'inline_style' => $inline_css
 	]);
 });
+
+function query_all_comments( $query ) {
+    $query->query_vars[ 'type__in' ] = array(
+        'pings',
+        'pingback', /* pings above should include */
+        'trackback', /* these both */
+        'comment',
+        'mention',
+        'like',
+        'repost',
+        'reply',
+        'tag',
+        'bookmark',
+        'rsvp:yes',
+        'rsvp:no',
+        'rsvp:maybe',
+        'rsvp:interested',
+        'invited',
+        'listen',
+        'read',
+        'watch',
+        'follow'
+    );
+}
+add_filter( 'pre_get_comments', 'query_all_comments' );
