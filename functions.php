@@ -959,7 +959,7 @@ add_action('init', function() {
 function query_all_comments( $query ) {
     $query->query_vars[ 'type__in' ] = array(
         'pings',
-        'pingback', /* pings above should include */
+        'pingback',  /* pings above should include */
         'trackback', /* these both */
         'comment',
         'mention',
