@@ -10,10 +10,10 @@ License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: one-column, two-columns, left-sidebar, accessibility-ready, custom-logo, custom-menu, featured-images, rtl-language-support, sticky-post, theme-options, threaded-comments, translation-ready, blog, education, news, wide-blocks
 Text Domain: barthes
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 5.6.40
 
-Author WordPress Theme, Copyright 2024 Compete Themes, 2024 Xurxo Diz Pico
+Author WordPress Theme, Copyright 2025 Compete Themes, 2025 Xurxo Diz Pico
 Author is distributed under the terms of the GNU GPL
 */
 /*===== Variables =====*/
@@ -54,7 +54,9 @@ h2 {
 }
 
 .singular-attachment .attachment-caption, .site-footer .design-credit, .widget > *, .comment-footer a,
-.comment-footer span, .bypostauthor > .comment .author-name:after, .further-reading span, .widget_tag_cloud a, .tagline, input[type=submit], input[type=text],
+.comment-footer span, .bypostauthor > .comment .author-name:after, .further-reading span, .widget_tag_cloud a, .tagline,
+input[type=submit],
+input[type=text],
 input[type=email],
 input[type=password],
 input[type=number],
@@ -401,9 +403,9 @@ textarea {
   padding: 9px 12px;
   width: 100%;
   max-width: 27.75em;
-  background: var(--color-soft);
+  background: var(--color-clear);
   color: var(--color-accent);
-  outline: 1px solid var(--color-soft);
+  outline: 1px solid var(--color-accent);
   border: none;
   border-radius: 0;
   font-family: var(--font-body), sans-serif;
@@ -428,9 +430,9 @@ textarea {
 
 input[type=submit] {
   padding: 0.8em;
+  margin-left: 10px;
   width: 100%;
-  color: var(--color-clear);
-  background: var(--color-accent);
+  background: var(--color-soft);
   outline: none;
   border: none;
   border-radius: 0;
@@ -440,9 +442,13 @@ input[type=submit] {
   transition: background 0.2s ease-in-out;
 }
 
-input[type=submit]:hover, input[type=submit]:active, input[type=submit]:focus {
+input[type=submit]:hover,
+input[type=submit]:active,
+input[type=submit]:focus,
+input[type=search]:hover,
+input[type=search]:active,
+input[type=search]:focus {
   cursor: pointer;
-  background: var(--color-accent);
 }
 
 input[type=search] {
@@ -1560,15 +1566,6 @@ a img {
 .sidebar-primary .widget_rss span {
   color: var(--color-soft);
 }
-.sidebar-primary .widget_search input[type=search] {
-  background: var(--color-clear) !important;
-}
-.sidebar-primary .widget_search input[type=submit] {
-  background: var(--color-accent);
-}
-.sidebar-primary .widget_search input[type=submit]:hover, .sidebar-primary .widget_search input[type=submit]:focus {
-  background: var(--color-accent);
-}
 .sidebar-primary .widget_search label {
   display: none;
 }
@@ -1723,12 +1720,24 @@ a img {
   padding-bottom: 3em;
 }
 
+.error404 .entry article img {
+  display: block;
+  margin: auto;
+  max-width: 100%;
+}
+
 .search-form-container input[type=search] {
   margin-bottom: 6px;
   max-width: none !important;
 }
 .search-form-container input[type=submit] {
   max-width: none;
+}
+
+.search-form {
+  display: flex;
+  max-width: 100%;
+  flex-wrap: nowrap;
 }
 
 @media all and (min-width: 34.375em) {
