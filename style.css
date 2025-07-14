@@ -2010,12 +2010,12 @@ dt {
   display: flex;
 }
 
-.mention, .pingback, .like, .repost {
+.webmention, .pingback, .like, .repost {
   background-color: var(--color-soft);
   border-radius: 10px;
 }
 
-.mention .comment-content,
+.webmention .comment-content,
 .pingback .comment-content,
 .like .comment-content,
 .repost .comment-content {
