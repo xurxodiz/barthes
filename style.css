@@ -221,6 +221,10 @@ li li {
   font-size: 1em;
 }
 
+ul.children {
+  list-style-type: disclosure-closed;
+}
+
 /* Markup styles */
 pre {
   word-wrap: break-word;
