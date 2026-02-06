@@ -8,9 +8,9 @@ function ct_author_load_scripts_styles()
         'subset'  => urlencode('latin,latin-ext'),
         'display' => 'swap'
     );
-    $fonts_url = add_query_arg($font_args, '//fonts.googleapis.com/css');
+    $fonts_url = add_query_arg($font_args, '//fonts.bunny.net/css');
 
-    wp_enqueue_style('ct-author-google-fonts', $fonts_url);
+    wp_enqueue_style('ct-author-bunny-fonts', $fonts_url);
 
     wp_enqueue_script('ct-author-js', get_template_directory_uri() . '/js/build/production.min.js', array( 'jquery' ), '', true);
     wp_localize_script('ct-author-js', 'ct_author_objectL10n', array(
@@ -55,9 +55,9 @@ function ct_author_enqueue_admin_styles($hook)
             'family' => urlencode('Open+Sans:300,400,700|Signika:300,400,700'),
             'subset' => urlencode('latin,latin-ext')
         );
-        $fonts_url = add_query_arg($font_args, '//fonts.googleapis.com/css');
+        $fonts_url = add_query_arg($font_args, '//fonts.bunny.net/css');
     
-        wp_enqueue_style('ct-author-google-fonts', $fonts_url);
+        wp_enqueue_style('ct-author-bunny-fonts', $fonts_url);
     }
 }
 add_action('admin_enqueue_scripts', 'ct_author_enqueue_admin_styles');
